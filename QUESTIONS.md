@@ -205,37 +205,89 @@ at 08:25
 
 ## Manage basic networking
 
-- [ ] Configure IPv4 and IPv6 addresses
+- [x] Configure IPv4 and IPv6 addresses
 
 ```bash
 nmtui
 ```
 
-- [ ] Configure hostname resolution
+- [x] Configure hostname resolution
 
 ```bash
 nmtui
 ```
 
-- [ ] Configure network services to start automatically at boot
+- [x] Configure network services to start automatically at boot
 
 ```bash
 systemctl start $service —now
 ```
 
-- [ ] Restrict network access using firewall-cmd/firewall
+- [x] Restrict network access using firewall-cmd/firewall
+
+[YouTube](https://www.youtube.com/watch?v=ZNmTKAdDnrc)
 
 ```bash
-firewall-cmd --get-zones
-firewall-cmd --zone ${zone} --list-all
+for zone in $(firewall-cmd --get-zones) ; do
+  firewall-cmd --zone ${zone} --list-all
+done
+
+firewall-cmd --get-services
+firewall-cmd --add-service=http --permanent
+firewall-cms --zone work --add-service=http --permanent
+firewall-cmd --add-service=https --permanent
+firewall-cmd --zone work --add-service=https --permanent
+firewall-cmd --reload
+firewall-cmd --list-all
+
+# Assign an interface to a zone
+firewall-cmd --get-active-zones
+firewall-cmd --change-interface=${interface} --zone=${zone} --permanent
+firewall-cmd --get-active-zones
+
+firewall-cmd --add-port=${port}/tcp --permanent
+
+firewall-cmd --add-zone ${zone} --permanent
+
+# Other RHCSA firewall-cmd commands
+firewall-cmd --get-default-zone
+firewall-cmd --set-default-zone=${zone}
+firewall-cmd --get-active-zones
+firewall-cmd --zone=${zone} --add-service=${service} --permanent
+firewall-cmd --zone=${zone} --add-port=${port}/tcp --permanent
+firewall-cmd --zone=${zone} --add-port=${port}/udp --permanent
+firewall-cmd --zone=${zone} --add-source=${ip} --permanent
 ```
 
 ## Manage users and groups
 
 - [ ] Create, delete, and modify local user accounts
-- [ ] Change passwords and adjust password aging for local user accounts
-- [ ] Create, delete, and modify local groups and group memberships
-- [ ] Configure superuser access
+
+```bash
+useradd -c “John Doe” -u 1001 johndoe
+passwd johndoe
+usermod -aG wheel johndoe
+```
+
+- [x] Change passwords and adjust password aging for local user accounts
+
+```bash
+chage -l johndoe
+chage -M 90 johndoe
+```
+
+- [x] Create, delete, and modify local groups and group memberships
+
+```bash
+groupadd -g 2001 admins
+usermod -aG admins johndoe 
+```
+
+- [x] Configure superuser access
+
+```bash
+visudo
+```
 
 ## Manage security
 
