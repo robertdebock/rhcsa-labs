@@ -33,6 +33,7 @@ systemctl set-default (multi-user|graphical|rescue|emergency).target)
 ```
 
 - [x] Interrupt the boot process in order to gain access to a system
+
 [Documentation](https://www.redhat.com/sysadmin/interrupt-linux-boot-process)
 
 ```bash
@@ -144,7 +145,7 @@ mount -a
 ```bash
 dnf -y install autofs
 echo “/opt auto.opt” >> /etc/auto.master
-echo “bla -fstype=ext2 :/dev/sdb1”
+echo “bla -fstype=ext2 :/dev/sdb1” >> /etc/auto.opt
 systemctl restart autos
 ```
 
@@ -159,7 +160,7 @@ systemctl restart autos
 ```bash
 systemctl get-default
 systemctl list-units -type target
-systemctl set-default (multi-user|graphical|rescue|emergency).target)
+systemctl set-default (multi-user|graphical|rescue|emergency).target
 ```
 
 - [x] Configure time service clients
