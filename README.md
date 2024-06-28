@@ -35,3 +35,7 @@ sudo dnf update rh-amazon-rhui-client
 exit
 exit
 ```
+
+## Questions
+
+Please see [QUESTIONS](QUESTIONS.md) for the questions and some answers.

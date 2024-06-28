@@ -291,9 +291,9 @@ visudo
 
 ## Manage security
 
-- [ ] Configure firewall settings using firewall-cmd/firewalld
-- [ ] Manage default file permissions
-- [ ] Configure key-based authentication for SSH
+- [x] Configure firewall settings using firewall-cmd/firewalld
+- [x] Manage default file permissions
+- [x] Configure key-based authentication for SSH
 - [ ] Set enforcing and permissive modes for SELinux
 - [ ] List and identify SELinux file and process context
 - [ ] Restore default file contexts
@@ -315,8 +315,8 @@ visudo
 
 ## Things to review
 
-- Interrupt the boot process in order to gain access to a system
-- Boot systems into different targets manually
-- Preserve system journals
-- Configure autofs
-- Install and update software packages from Red Hat Network, a remote repository, or from the local file system
+- [ ] Interrupt the boot process in order to gain access to a system
+- [ ] Boot systems into different targets manually
+- [ ] Preserve system journals
+- [ ] Configure autofs
+- [ ] Install and update software packages from Red Hat Network, a remote repository, or from the local file system
