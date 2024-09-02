@@ -7,6 +7,11 @@ data "aws_ami" "rhel9" {
     values = ["RHEL-9*"]
   }
 
+  filter {
+    name   = "architecture"
+    values = ["arm64"]
+  }
+
   owners = ["309956199498"]
 }
 

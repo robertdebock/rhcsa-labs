@@ -84,6 +84,12 @@ resource "aws_security_group" "servers" {
     protocol        = "-1"
     security_groups = [aws_security_group.workstation.id]
   }
+  ingress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    self            = true
+  }
   egress {
     from_port   = 0
     to_port     = 0
@@ -100,7 +106,7 @@ resource "aws_internet_gateway" "default" {
 # Create a workstation instance.
 resource "aws_instance" "workstation" {
   ami                         = data.aws_ami.rhel9.id
-  instance_type               = "t2.micro"
+  instance_type               = "t4g.micro"
   subnet_id                   = aws_subnet.default.id
   key_name                    = aws_key_pair.default.key_name
   vpc_security_group_ids      = [aws_security_group.workstation.id]
@@ -125,16 +131,19 @@ resource "aws_volume_attachment" "workstation" {
 
 # Create server instances.
 resource "aws_instance" "server" {
-  count                  = var.server_count
-  ami                    = data.aws_ami.rhel9.id
-  instance_type          = "t2.small"
-  subnet_id              = aws_subnet.default.id
-  key_name               = aws_key_pair.default.key_name
-  vpc_security_group_ids = [aws_security_group.servers.id]
+  count                       = var.server_count
+  ami                         = data.aws_ami.rhel9.id
+  instance_type               = "t4g.small"
+  subnet_id                   = aws_subnet.default.id
+  key_name                    = aws_key_pair.default.key_name
+  vpc_security_group_ids      = [aws_security_group.servers.id]
   associate_public_ip_address = true
   tags = {
     Name = "server-${count.index}.${var.domain}"
   }
+  # Add an extra block device.
+
+
 }
 
 # Create a volume for the server instances.
@@ -167,7 +176,6 @@ resource "aws_route53_record" "server" {
   zone_id = data.aws_route53_zone.default.zone_id
   name    = "server-${count.index}"
   type    = "A"
-  # records = [element(aws_instance.server.*.private_ip, count.index)]
   records = [aws_instance.server[count.index].private_ip]
   ttl     = 300
 }

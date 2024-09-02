@@ -2,206 +2,56 @@
 
 ## Understand and use essential tools
 
-- [x] Access a shell prompt and issue commands with correct syntax
-- [x] Use input-output redirection (>, >>, |, 2>, etc.)
-- [x] Use grep and regular expressions to analyze text
-- [x] Access remote systems using SSH
-- [x] Log in and switch users in multiuser targets
-- [x] Archive, compress, unpack, and uncompress files using tar, star, gzip, and bzip2
-- [x] Create and edit text files
-- [x] Create, delete, copy, and move files and directories
-- [x] Create hard and soft links
-- [x] List, set, and change standard ugo/rwx permissions
-- [x] Locate, read, and use system documentation including man, info, and files in /usr/share/doc
+1. Login to `server-0.adfinis.dev`.
+2. Run the the command `ss` issueing the `tulpen` option.
+3. Write the opened ports into a file called `/tmp/openports.txt`.
+4. This file should be owned by the owner `root` and the group `ec2-user`.
+5. The file should be readable by the owner and tkkhe group, but not by others.
+6. Create a soft link to the file in the `/tmp` directory called `/tmp/softlink.txt`.
+7. Create a hard link to the file in the `/tmp` directory called `/tmp/hardlink.txt`.
+8. Find the package that containers /usr/share/dics/words and install it.
+9. Find all occurrences of the patther `red` in the file `/usr/share/dics/words`. Write the resulting number into a file called `/tmp/redwords.txt`.
+10. Compress the file `/tmp/redwords.txt` with `gzip` and call it `/tmp/redwords.txt.gz`.
 
 ## Create simple shell scripts
 
-- [x] Conditionally execute code (use of: if, test, [], etc.)
-- [x] Use Looping constructs (for, etc.) to process file, command line input
-- [x] Process script inputs ($1, $2, etc.)
-- [x] Processing output of shell commands within a script
-Operate running systems
-- [x] Boot, reboot, and shut down a system normally
-- [x] Boot systems into different targets manually
+11. Create a script (`/tmp/script.sh`) that prints the day if it's a weekday. (Monday to Friday)
+12. Let the script read the first arugment and print it if it's a weekday, otherwise print the current date.
 
-[YouTube](https://www.youtube.com/watch?v=c328XfEARJ4)
+## Operate running systems
 
-```bash
-systemctl get-default
-systemctl list-units -type target
-systemctl set-default (multi-user|graphical|rescue|emergency).target)
-```
-
-- [x] Interrupt the boot process in order to gain access to a system
-
-[Documentation](https://www.redhat.com/sysadmin/interrupt-linux-boot-process)
-
-```bash
- # add `rd.break` to grubs `linux` line.
- mount -o remount,rw /sysroot
- chroot /sysroot
- passwd root`
- 
- # add `rw init=/bin/bash` to grubs `linux` line.
- passwd
- ```
-
-- [x] Identify CPU/memory intensive processes and kill processes
-
-```bash
-top; ps -U root -u root u
-pgrep -v -u root -l
-kill ${pid}
-pidof ${name}
-```
-
-- [x] Adjust process scheduling
-
-[YouTube](https://www.youtube.com/watch?v=JPBQsTtHaIE)
-
-```bash
-chrt -p ${pid}
-chrt -f -p ${priority} ${pid}
-```
-
-- [x] Manage tuning profiles
-
-[Documentation](https://www.redhat.com/sysadmin/linux-tuned-tuning-profiles)
-
-```bash
-dnf install tuned tuned-profiles-mssql
-tuned-adm list
-tuned-adm active
-tuned-adm recommend
-tuned-adm profile ${profile:mssql}
-```
-
-- [x] Locate and interpret system log files and journals
-
-```bash
-journalctl —-list-boots
-journaclt -b 0
-```
-
-- [x] Preserve system journals
-
-[Documentation](https://www.redhat.com/sysadmin/store-linux-system-journals)
-
-```bash
-vi /etc/systemd/journald.conf
-journal.storage=persist
-systemctl restart systemd-journald
-reboot
-```
-
-- [x] Start, stop, and check the status of network services
-- [x] Securely transfer files between systems
+13. Set the boot targetmode to `multi-user.target`.
+14. Reboot the system.
+15. Prioritize the process `/usr/bin/rhsmcertd` with the priority `10`.
+16. Kill the running process `/usr/bin/rhsmcertd`.
+17. Activate the tuned profile `powersave`.
+18. Write all occurences of the patthen `DHCP` from the first bootlog into a file called `/tmp/dhcp.txt`.
+19. Have journalctl write all logs to a persistent storage.
+20. Copy the file /var/log/messages to server-1.adfinis.dev in the /tmp directory.
 
 ## Configure local storage
 
-- [x] List, create, delete partitions on MBR and GPT disks
-
-[YouTube](https://www.youtube.com/watch?v=208_PXEsaD0)
-
-```bash
-dnf -y install lvm2
-partprobe
-fdisk -l
-gdisk
-swapon -a
-```
-
-- [x] Create and remove physical volumes
-- [x] Assign physical volumes to volume groups
-- [x] Create and delete logical volumes
-- [x] Configure systems to mount file systems at boot by universally unique ID (UUID) or label
-
-```bash
-blkid
-lsblk
-```
-
-- [x] Add new partitions and logical volumes, and swap to a system non-destructively
-
-```bash
-fallocate -l 1G /swapfile
-swapon /swapfile
-cat /proc/swaps
-```
+21. Create a LVM volume group named `vgroup` on /dev/nvme1n1.
+22. Create a 1GiB LVM logical volume named `lvol` inside the "vgroup" LVM volume group.
+23. The `lvol` LVM logical volume should be formatted with the `ext2` filesystem and mounted persistently on the `/lvol` directory using the universally unique ID (UUID).
+24. Configure a basic web server that displays `Welcome to the RHCSA Practice Exam!` once connected to it.
+25. Create a swap file of 1GiB and activate it.
 
 ## Create and configure file systems
 
-- [x] Mount and unmount network file systems using NFS
+26. On `server-0`, create an NFS export of the `/var/www/html` directory.
+27. Mount the NFS export on `server-1` in the `/mnt` directory.
 
-```bash
-dnf -y install nfs-utils
-echo “server:/export /mount defaults 0 0” >> /etc/fstab
-mount -a
-```
-
-- [x] Create, mount, unmount, and use vfat, ext4, and xfs file systems
-- [x] Configure autofs
-
-```bash
-dnf -y install autofs
-echo “/opt auto.opt” >> /etc/auto.master
-echo “bla -fstype=ext2 :/dev/sdb1” >> /etc/auto.opt
-systemctl restart autos
-```
-
-- [x] Extend existing logical volumes
-- [x] Create and configure set-GID directories for collaboration
-- [x] Diagnose and correct file permission problems
+28. On server-1, automatically mount /opt when accessed, mounted from server-0:/var/www/html.
+29. Extend /dev/vgroup/lvol to 2GiB.
+30. Create a set-GID directory called `/collab` that allows all users to write to it, but only the owner to delete files.
 
 ## Deploy, configure, and maintain systems
 
-- [x] Configure systems to boot into a specific target automatically
-
-```bash
-systemctl get-default
-systemctl list-units -type target
-systemctl set-default (multi-user|graphical|rescue|emergency).target
-```
-
-- [x] Configure time service clients
-
-```bash
-dnf -y install chrony
-man chrony.conf
-echo “server ntp1.example.net iburst” >> /etc/chrony.conf
-systemctl restart chrony
-```
-
-- [x] Install and update software packages from Red Hat Network, a remote repository, or from the local file system
-
-```bash
-dnf repolist all
-dnf repoinfo
-dnf whatprovides ‘*/nano’
-dnf localinstall PACKAGE.rpm
-dnf install dnf-utils
-yum-config-manager —add-repo https://repo.example.com
-yum-config-manager —disable repo FOO
-dnf install create reporepo
-createrepo /directory
-yum-config-manager —add-repo file:///directory
-```
-
-- [x] Modify the system bootloader
-
-```bash
-vi /etc/default/grub
-grub2-mkconfig -o /boot/grub2/grub.cfg
-```
-
-- [x] Start and stop services and configure services to start automatically at boot
-- [x] Schedule tasks using at and cron
-
-```bash
-dnf -y install at
-systemctl enable adt —now
-at 08:25
-```
+31. Configure the system to use the `ntp1.example.net` NTP server.
+32. Add the package repository hosted on `https://repo.example.com` to the system.
+33. Add a `quiet` arguemnt to the bootloader.
+34. Add a job to root crontab that runs the command `echo "Hello world."` every other day.
 
 ## Manage basic networking
 

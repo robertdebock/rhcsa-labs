@@ -8,5 +8,6 @@ Host ${server}
   User ${ssh_user}
   IdentityFile ${ssh_key_path}
   StrictHostKeyChecking no
+  ProxyJump ${workstation}
 
 %{ endfor ~}

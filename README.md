@@ -24,6 +24,7 @@ cd terraform
 terraform init
 terraform apply
 ssh workstation.adfinis.dev
+exit
 ssh server-0.adfinis.dev
 ```
 
