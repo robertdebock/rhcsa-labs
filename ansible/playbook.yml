@@ -1,11 +1,13 @@
 #!/usr/bin/env ansible-playbook
 
 ---
-- name: Check exam results
+- name: Understand and use essential tools
   hosts: server-0
+  gather_facts: false
+  become: false
 
   tasks:
-    - name: 3 Check if /tmp/openports contains 22
+    - name: 1 Check if /tmp/openports contains 22
       ansible.builtin.shell: cat /tmp/openports | grep 22
       register: openports
       ignore_errors: true

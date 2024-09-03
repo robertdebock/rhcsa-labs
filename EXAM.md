@@ -4,18 +4,18 @@
 
 Login to `server-0`. Run the the command `ss` issueing the `tulpen` option.
 
-1 Write the opened ports into a file called `/tmp/openports.txt`.
-2 This file should be owned by the owner `root` and the group `ec2-user`.
-- 3. The file should be readable by the owner and tkkhe group, but not by others.
-- 4. Create a soft link to the file in the `/tmp` directory called `/tmp/softlink.txt`.
-- 5. Create a hard link to the file in the `/tmp` directory called `/tmp/hardlink.txt`.
-- 6. Find the package that containers /usr/share/dics/words and install it.
-- 7. Find all occurrences of the patther `red` in the file `/usr/share/dics/words`. Write the resulting number into a file called `/tmp/redwords.txt`.
-- 8. Compress the file `/tmp/redwords.txt` with `gzip` and call it `/tmp/redwords.txt.gz`.
+1. Write the opened ports into a file called `/tmp/openports.txt`.
+2. This file should be owned by the owner `root` and the group `ec2-user`.
+3. The file should be readable by the owner and tkkhe group, but not by others.
+4. Create a soft link to the file in the `/tmp` directory called `/tmp/softlink.txt`.
+5. Create a hard link to the file in the `/tmp` directory called `/tmp/hardlink.txt`.
+6. Find the package that containers /usr/share/dics/words and install it.
+7. Find all occurrences of the patther `red` in the file `/usr/share/dics/words`. Write the resulting number into a file called `/tmp/redwords.txt`.
+8. Compress the file `/tmp/redwords.txt` with `gzip` and call it `/tmp/redwords.txt.gz`.
 
 ## Create simple shell scripts
 
-11 Create a script (`/tmp/script.sh`) that prints the day if it's a weekday. (Monday to Friday)
+11. Create a script (`/tmp/script.sh`) that prints the day if it's a weekday. (Monday to Friday)
 12 Let the script read the first arugment and print it if it's a weekday, otherwise print the current date.
 
 ## Operate running systems
