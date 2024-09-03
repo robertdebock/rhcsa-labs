@@ -2,16 +2,17 @@
 
 ## Understand and use essential tools
 
-1 Login to `server-0.adfinis.dev`.
-2 Run the the command `ss` issueing the `tulpen` option.
-3 Write the opened ports into a file called `/tmp/openports.txt`.
-4 This file should be owned by the owner `root` and the group `ec2-user`.
-5 The file should be readable by the owner and tkkhe group, but not by others.
-6 Create a soft link to the file in the `/tmp` directory called `/tmp/softlink.txt`.
-7 Create a hard link to the file in the `/tmp` directory called `/tmp/hardlink.txt`.
-8 Find the package that containers /usr/share/dics/words and install it.
-9 Find all occurrences of the patther `red` in the file `/usr/share/dics/words`. Write the resulting number into a file called `/tmp/redwords.txt`.
-10 Compress the file `/tmp/redwords.txt` with `gzip` and call it `/tmp/redwords.txt.gz`.
+- Login to `server-0.adfinis.dev`.
+- Run the the command `ss` issueing the `tulpen` option.
+
+- 1. Write the opened ports into a file called `/tmp/openports.txt`.
+- 2. This file should be owned by the owner `root` and the group `ec2-user`.
+- 3. The file should be readable by the owner and tkkhe group, but not by others.
+- 4. Create a soft link to the file in the `/tmp` directory called `/tmp/softlink.txt`.
+- 5. Create a hard link to the file in the `/tmp` directory called `/tmp/hardlink.txt`.
+- 6. Find the package that containers /usr/share/dics/words and install it.
+- 7. Find all occurrences of the patther `red` in the file `/usr/share/dics/words`. Write the resulting number into a file called `/tmp/redwords.txt`.
+- 8. Compress the file `/tmp/redwords.txt` with `gzip` and call it `/tmp/redwords.txt.gz`.
 
 ## Create simple shell scripts
 

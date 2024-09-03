@@ -1,0 +1,12 @@
+#!/usr/bin/env ansible-playbook
+
+---
+- name: Check exam results
+  hosts: server-0
+
+  tasks:
+    - name: 3 Check if /tmp/openports contains 22
+      ansible.builtin.shell: cat /tmp/openports | grep 22
+      register: openports
+      ignore_errors: true
+      changed_when: false

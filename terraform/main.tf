@@ -13,7 +13,7 @@ resource "local_file" "private_key" {
 
 # Upload the public key to AWS.
 resource "aws_key_pair" "default" {
-  key_name   = "rhcsa-lab"
+  key_name   = "rhcsa-lab-${var.name}"
   public_key = tls_private_key.default.public_key_openssh
 }
 
@@ -21,7 +21,7 @@ resource "aws_key_pair" "default" {
 resource "aws_vpc" "default" {
   cidr_block = "192.168.0.0/16"
   tags = {
-    Name = "rhcsa-lab"
+    Name = "rhcsa-lab-${var.name}"
   }
 }
 
@@ -30,7 +30,7 @@ resource "aws_subnet" "default" {
   vpc_id     = aws_vpc.default.id
   cidr_block = "192.168.1.0/24"
   tags = {
-    Name = "rhcsa-lab"
+    Name = "rhcsa-lab-${var.name}"
   }
 }
 
@@ -42,7 +42,7 @@ resource "aws_route_table" "default" {
     gateway_id = aws_internet_gateway.default.id
   }
   tags = {
-    Name = "rhcsa-lab"
+    Name = "rhcsa-lab-${var.name}"
   }
 }
 
@@ -112,7 +112,7 @@ resource "aws_instance" "workstation" {
   vpc_security_group_ids      = [aws_security_group.workstation.id]
   associate_public_ip_address = true
   tags = {
-    Name = "workstation.${var.domain}"
+    Name = "workstation.${var.name}.${var.domain}"
   }
 }
 
@@ -139,11 +139,8 @@ resource "aws_instance" "server" {
   vpc_security_group_ids      = [aws_security_group.servers.id]
   associate_public_ip_address = true
   tags = {
-    Name = "server-${count.index}.${var.domain}"
+    Name = "server-${count.index}.${var.name}.${var.domain}"
   }
-  # Add an extra block device.
-
-
 }
 
 # Create a volume for the server instances.
@@ -164,7 +161,7 @@ resource "aws_volume_attachment" "server" {
 # Set the DNS record for workstation instance.
 resource "aws_route53_record" "workstation" {
   zone_id = data.aws_route53_zone.default.zone_id
-  name    = "workstation"
+  name    = "workstation.${var.name}"
   type    = "A"
   records = [aws_instance.workstation.public_ip]
   ttl     = 300
@@ -174,7 +171,7 @@ resource "aws_route53_record" "workstation" {
 resource "aws_route53_record" "server" {
   count   = length(aws_instance.server.*)
   zone_id = data.aws_route53_zone.default.zone_id
-  name    = "server-${count.index}"
+  name    = "server-${count.index}.${var.name}"
   type    = "A"
   records = [aws_instance.server[count.index].private_ip]
   ttl     = 300
@@ -189,4 +186,13 @@ resource "local_file" "ssh_config" {
     ssh_user     = "ec2-user"
   })
   filename = pathexpand("~/.ssh/config.d/rhcsa-lab.conf")
+}
+
+# Place an Ansible inventory file.
+resource "local_file" "ansible_inventory" {
+  content = templatefile("${path.module}/templates/ansible_inventory.tpl", {
+    servers = aws_route53_record.server[*].fqdn
+  })
+  # Place the inventory in ../ansible/inventory.
+  filename = "${path.module}/../ansible/inventory/hosts"
 }

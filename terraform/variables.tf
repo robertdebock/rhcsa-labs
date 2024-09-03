@@ -11,3 +11,10 @@ variable "server_count" {
   type        = number
   default     = 2
 }
+
+# The name to make resources unique.
+variable "name" {
+  description = "The name to make resources unique."
+  type        = string
+  default     = "robert"
+}
