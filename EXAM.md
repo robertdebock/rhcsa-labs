@@ -2,11 +2,10 @@
 
 ## Understand and use essential tools
 
-- Login to `server-0.adfinis.dev`.
-- Run the the command `ss` issueing the `tulpen` option.
+Login to `server-0`. Run the the command `ss` issueing the `tulpen` option.
 
-- 1. Write the opened ports into a file called `/tmp/openports.txt`.
-- 2. This file should be owned by the owner `root` and the group `ec2-user`.
+1 Write the opened ports into a file called `/tmp/openports.txt`.
+2 This file should be owned by the owner `root` and the group `ec2-user`.
 - 3. The file should be readable by the owner and tkkhe group, but not by others.
 - 4. Create a soft link to the file in the `/tmp` directory called `/tmp/softlink.txt`.
 - 5. Create a hard link to the file in the `/tmp` directory called `/tmp/hardlink.txt`.
