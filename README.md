@@ -30,4 +30,4 @@ ssh server-0.adfinis.dev
 
 ## Questions
 
-Please see [QUESTIONS](QUESTIONS.md) for the questions and some answers.
+Please see [EXAM](EXAM.md) and [EXPLANATION](EXPLANATION.md) for the questions and some answers.
