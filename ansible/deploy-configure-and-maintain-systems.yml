@@ -1,0 +1,16 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: Deploy, configure, and maintain systems
+  hosts: server_0
+  gather_facts: false
+  become: false
+
+  tasks:
+    - name: 1. Configure the system to use the `ntp1.example.net` NTP server.
+      ansible.builtin.command:
+        cmd: grep "server ntp1.example.net" /etc/chrony.conf
+      register: ntp_server
+      failed_when:
+        - ntp_server.rc != 0
+      changed_when: false

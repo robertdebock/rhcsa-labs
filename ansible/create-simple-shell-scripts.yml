@@ -1,0 +1,60 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: Create simple shell scripts
+  hosts: server_0
+  gather_facts: false
+  become: false
+
+  tasks:
+    - name: 1. Check if /tmp/script.sh exists
+      ansible.builtin.stat:
+        path: /tmp/script.sh
+      register: script_stat
+      failed_when:
+        - not script_stat.stat.exists
+
+    - name: 1. Run the script
+      when:
+        - script_stat.stat.exists
+      block:
+        - name: 1. Create a script (`/tmp/script.sh`) that prints the day if it's a weekday. (Monday to Friday)
+          ansible.builtin.command: /tmp/script.sh
+          register: script
+          failed_when:
+            - script.stdout not in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+          changed_when: false
+
+    - name: 2. Check if /tmp/other-script.sh exists
+      ansible.builtin.stat:
+        path: /tmp/other-script.sh
+      register: other_script_stat
+      failed_when:
+        - not other_script_stat.stat.exists
+
+    - name: 2. Run the other script with a weekday argument
+      when:
+        - other_script_stat.stat.exists
+      block:
+        - name: 2. Run the other script with a weekday argument
+          ansible.builtin.command: /tmp/other-script.sh Wednesday
+          register: other_script
+          failed_when:
+            - other_script.stdout not in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+          loop:
+            - Monday
+            - Tuesday
+            - Wednesday
+            - Thursday
+            - Friday
+          changed_when: false
+
+        - name: 2. Run the other script with a weekend day argument
+          ansible.builtin.command: /tmp/other-script.sh Saturday
+          register: other_script
+          failed_when:
+            - other_script.rc != 1
+          loop:
+            - Saturday
+            - Sunday
+          changed_when: false

@@ -1,0 +1,68 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: Configure local storage
+  hosts: server_0
+  gather_facts: false
+  become: false
+
+  tasks:
+    - name: 1. Install LVM2
+      ansible.builtin.package:
+        name: lvm2
+      become: true
+
+    - name: 1. Create a LVM volume group named `vgroup` on /dev/nvme1n1
+      community.general.lvg:
+        vg: vgroup
+        pvs: /dev/nvme1n1
+        state: present
+      check_mode: true
+      register: vgroup
+      failed_when:
+        - vgroup.changed
+      become: true
+
+    - name: 2. Create a 1GiB LVM logical volume named `lvol` inside the "vgroup" LVM volume group.
+      community.general.lvol:
+        vg: vgroup
+        lv: lvol
+        size: 1G
+        state: present
+      check_mode: true
+      register: lvol
+      failed_when:
+        - lvol.changed
+      become: true
+
+    - name: 3. Format the `lvol` LVM logical volume with the `ext2` filesystem
+      community.general.filesystem:
+        fstype: ext2
+        dev: /dev/vgroup/lvol
+      check_mode: true
+      register: filesystem
+      failed_when:
+        - filesystem.changed
+      become: true
+
+    - name: 4. Check if http://localhost serves Welcome to the RHCSA Practice Exam
+      ansible.builtin.uri:
+        url: http://localhost
+        return_content: true
+      register: uri
+      failed_when:
+        - uri.content != "Welcome to the RHCSA Practice Exam!\n"
+      changed_when: false
+
+    - name: 5. Create a swap file (`/swapfile`) of 1GiB and activate it persistently
+      ansible.posix.mount:
+        name: none
+        src: /swapfile
+        fstype: swap
+        opts: sw
+        passno: 0
+        state: present
+      check_mode: true
+      register: swapfile
+      failed_when:
+        - swapfile.changed

@@ -3,8 +3,8 @@
 ${ server }
 %{ endfor ~}
 
-[server-0]
+[server_0]
 ${ servers[0] }
 
-[server-1]
+[server_1]
 ${ servers[1] }

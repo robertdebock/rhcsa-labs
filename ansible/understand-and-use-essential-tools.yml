@@ -1,0 +1,98 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: Understand and use essential tools
+  hosts: server_0
+  gather_facts: false
+  become: false
+  any_errors_fatal: false
+
+  tasks:
+    - name: 1. Check if /tmp/openports.txt exists
+      ansible.builtin.stat:
+        path: /tmp/openports.txt
+      register: openports_stat
+      failed_when:
+        - not openports_stat.stat.exists
+
+    - name: 1. Run checks if /tmp/openports.txt exists
+      when:
+        - openports_stat.stat.exists
+      block:
+        - name: 1. Check if /tmp/openports contains 22
+          ansible.builtin.command: grep "0.0.0.0:22" /tmp/openports.txt
+          register: openports
+          changed_when: false
+
+        - name: 1. Fail if /tmp/openports.txt does not contain 22
+          ansible.builtin.fail:
+            msg: "/tmp/openports.txt does not  contain 22"
+          when:
+            - openports.rc != 0
+
+        - name: 2. This file should be owned by the owner root and the group ec2-user
+          ansible.builtin.file:
+            path: /tmp/openports.txt
+            owner: root
+            group: ec2-user
+          check_mode: true
+          register: two
+          failed_when: two.changed
+
+        - name: 3. The file should be readable by the owner and the group, but not by others
+          ansible.builtin.file:
+            path: /tmp/openports.txt
+            mode: '0440'
+          check_mode: true
+          register: three
+          failed_when: three.changed
+
+        - name: 4. Create a soft link to the file in the /tmp directory called /tmp/softlink.txt
+          ansible.builtin.file:
+            src: /tmp/openports.txt
+            dest: /tmp/softlink.txt
+            state: link
+          check_mode: true
+          register: four
+          failed_when: four.changed
+
+        - name: 5. Create a hard link to the file in the /tmp directory called /tmp/hardlink.txt
+          ansible.builtin.file:
+            src: /tmp/openports.txt
+            dest: /tmp/hardlink.txt
+            state: hard
+            mode: '0440'
+          check_mode: true
+          register: five
+          failed_when: five.changed
+
+    - name: 6. Find the package that contains /usr/share/dics/words and install it
+      ansible.builtin.package:
+        name: words
+        state: present
+      check_mode: true
+      register: six
+      failed_when: six.changed
+      become: true
+
+    - name: 7. Check if /tmp/redwords.txt exists
+      ansible.builtin.stat:
+        path: /tmp/redwords.txt
+      register: seven_stat
+      failed_when:
+        - not seven_stat.stat.exists
+
+    - name: 7. Find all occurrences of the pattern `red` in the file `/usr/share/dics/words`. Write the resulting number into a file called `/tmp/redwords.txt`.
+      ansible.builtin.slurp:
+        src: /tmp/redwords.txt
+      check_mode: true
+      register: seven
+      failed_when: seven['content'] | b64decode != '6171\n'
+      when:
+        - seven_stat.stat.exists
+
+    - name: 8. Compress the file `/tmp/redwords.txt` with `gzip` and call it `/tmp/redwords.txt.gz`.
+      ansible.builtin.stat:
+        path: /tmp/redwords.txt.gz
+      register: eight
+      failed_when: not eight.stat.exists

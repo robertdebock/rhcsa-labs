@@ -1,14 +1,23 @@
 #!/usr/bin/env ansible-playbook
-
 ---
-- name: Understand and use essential tools
-  hosts: server-0
-  gather_facts: false
-  become: false
 
-  tasks:
-    - name: 1 Check if /tmp/openports contains 22
-      ansible.builtin.shell: cat /tmp/openports | grep 22
-      register: openports
-      ignore_errors: true
-      changed_when: false
+- name: Include understand-and-use-essential-tools.yml
+  ansible.builtin.import_playbook: understand-and-use-essential-tools.yml
+
+- name: Include create-simple-shell-scripts.yml
+  ansible.builtin.import_playbook: create-simple-shell-scripts.yml
+
+- name: Include operate-running-systems.yml
+  ansible.builtin.import_playbook: operate-running-systems.yml
+
+- name: Include configure-local-storage.yml
+  ansible.builtin.import_playbook: configure-local-storage.yml
+
+- name: Include create-and-configure-filesystems.yml
+  ansible.builtin.import_playbook: create-and-configure-filesystems.yml
+
+- name: Include deploy-configure-and-maintain-systems.yml
+  ansible.builtin.import_playbook: deploy-configure-and-maintain-systems.yml
+
+- name: Include manage-basic-networking.yml
+  ansible.builtin.import_playbook: manage-basic-networking.yml

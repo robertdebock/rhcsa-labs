@@ -1,0 +1,75 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: Operate running systems
+  hosts: server_0
+  gather_facts: false
+  become: false
+
+  tasks:
+    - name: 1. Set the boot targetmode to `multi-user.target`
+      ansible.builtin.systemd:
+        name: multi-user.target
+        enabled: true
+        state: started
+      check_mode: true
+      register: boot_target
+      failed_when:
+        - boot_target.changed
+
+    - name: 2. Find PID of rhsmcertd
+      ansible.builtin.command:
+        cmd: pidof rhsmcertd
+      register: rhsmcertd
+      failed_when:
+        - rhsmcertd.rc != 0
+      changed_when: false
+
+    - name: 2. Find the priority of rhsmcertd
+      ansible.builtin.shell:
+        cmd: set -o pipefail ; chrt -p {{ rhsmcertd.stdout }} | grep "priority" | awk '{print $NF}'
+      register: rhsmcertd_priority
+      changed_when: false
+      failed_when:
+        - rhsmcertd_priority.stdout != "10"
+
+    - name: 3 Install tuned
+      ansible.builtin.package:
+        name: tuned
+      become: true
+
+    - name: 3. Activate the tuned profile `powersave`
+      ansible.builtin.shell:
+        cmd: set -o pipefail ; tuned-adm active | awk '{print $NF}'
+      register: tuned_profile
+      failed_when:
+        - tuned_profile.stdout != "powersave"
+      changed_when: false
+
+    - name: 4. Check if /tmp/dhcp.txt exists
+      ansible.builtin.stat:
+        path: /tmp/dhcp.txt
+      register: dhcp_stat
+      failed_when:
+        - not dhcp_stat.stat.exists or
+          dhcp_stat.stat.size < 512
+
+    - name: 5. Check if journalctl stores persistently
+      ansible.builtin.command:
+        cmd: grep "Storage=persistent" /etc/systemd/journald.conf
+      register: journalctl_verify
+      changed_when: false
+
+
+- name: Operate running systems (server-1)
+  hosts: server_1
+  gather_facts: false
+  become: false
+
+  tasks:
+    - name: 6. Check if /tmp/hosts exists
+      ansible.builtin.stat:
+        path: /tmp/hosts
+      register: hosts_stat
+      failed_when:
+        - not hosts_stat.stat.exists

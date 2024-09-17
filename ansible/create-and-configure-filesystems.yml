@@ -1,0 +1,56 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: Create and configure filesystems (1)
+  hosts: server_0
+  gather_facts: false
+  become: false
+
+  tasks:
+    - name: 1. Install nfs-utils
+      ansible.builtin.package:
+        name: nfs-utils
+      check_mode: true
+      become: true
+      register: nfs_utils
+      failed_when:
+        - nfs_utils.changed
+
+    - name: 1. Create an NFS export of the `/var/www/html` directory
+      ansible.builtin.lineinfile:
+        path: /etc/exports
+        line: "/var/www/html 192.168.1.0/24(rw)"
+        state: present
+      check_mode: true
+      register: nfs_export
+      failed_when:
+        - nfs_export.changed
+
+    - name: 1. Start and enable nfs-server
+      ansible.builtin.service:
+        name: nfs-server
+        state: started
+        enabled: true
+      become: true
+      check_mode: true
+      register: nfs_server
+      failed_when:
+        - nfs_server.changed
+
+- name: Create and configure filesystems (2)
+  hosts: server_1
+  gather_facts: false
+  become: false
+
+  tasks:
+    - name: 2. Mount the NFS export on `server-1` in the `/mnt` directory
+      ansible.posix.mount:
+        path: /mnt
+        src: 192.168.1.10:/var/www/html
+        fstype: nfs
+        opts: defaults
+        state: mounted
+      check_mode: true
+      register: nfs_mount
+      failed_when:
+        - nfs_mount.changed

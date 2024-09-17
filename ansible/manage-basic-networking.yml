@@ -1,0 +1,43 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: Manage basic networking
+  hosts: server_0
+  gather_facts: false
+  become: false
+
+  tasks:
+    - name: 1. Configure the search domain `adfins.dev`.
+      ansible.builtin.lineinfile:
+        path: /etc/resolv.conf
+        line: "search adfins.dev"
+        state: present
+      check_mode: true
+      register: search_domain
+      failed_when:
+        - search_domain.changed
+
+    - name: 3. Install firewalld
+      ansible.builtin.package:
+        name: firewalld
+      become: true
+      check_mode: true
+      register: firewalld
+      failed_when:
+        - firewalld.changed
+
+    - name: 3. Add service to firewall permanently
+      ansible.posix.firewalld:
+        service: "{{ item }}"
+        permanent: true
+        state: enabled
+      loop:
+        - http
+        - https
+        - nfs
+        - ssh
+      become: true
+      check_mode: true
+      register: firewalld_services
+      failed_when:
+        - firewalld_services.changed
