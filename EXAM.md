@@ -54,29 +54,24 @@ Login to `server-0`. Run the the command `ss` issueing the `tulpen` option.
 
 1. Configure `eth0` with a fixed IP address.
 2. Configure the search domain `adfins.dev`.
-3. Install `firewalld`, add the services `http`, `https`, `nfs` and `ssh` permanently.
+3. Install `firewalld`, add the services `http`, `https`, `nfs`, `mountd`, `rpc-bind` and `ssh` permanently.
 
 ## Manage users and groups
 
-39 Create a user `johndoe` with the UID `1001`.
-40 Set the password for the user `johndoe` to `redhat`.
-41 Add the user `johndoe` to the group `users`.
-42 Change the password aging for the user `johndoe` to 90 days.
-43 Create a group `admins` with the GID `2001`.
-44 Add the user `johndoe` to the group `admins`.
-45 Allow the group `admin` to execute the command `systemctl` without a password.
+1. Create a user `johndoe` with the UID `1001`.
+2. Create a group `admins` with the GID `2001`.
+3. Add the user `johndoe` to the group `admins`.
+4. Allow the group `admin` to execute the command `systemctl` without a password.
 
 ## Manage security
 
-46 Set a umask of `027` for all users.
-47 On server-0, create a key pair for the user `root` and copy the public key to server-1.
-48 Enable SELinux at boot.
-49 Set SELinux to enforcing mode.
-50 Save the SELinux context of the file `/etc/hosts` to `/tmp/hosts_context`.
-51 Restore the default file contexts of the `/var/www` directory, recursively.
-52 Allow the target `http_port_t` to listen on port `8080`.
-53 Enable the SELinux boolean `httpd_can_network_connect`.
-54 Display all SELinux alerts (if any) with a reason why to `/tmp/selinux_alerts`.
+1. Set a umask of `027` for all users.
+2. Enable SELinux at boot.
+3. Set SELinux to enforcing mode.
+4. Save the SELinux context of the file `/etc/hosts` to `/tmp/hosts_context.txt`.
+5. Restore the default file contexts of the `/var/www` directory, recursively.
+6. Allow the target `http_port_t` to listen on port `8080`.
+7. Enable the SELinux boolean `httpd_can_network_connect`.
 
 ## Manage containers
 

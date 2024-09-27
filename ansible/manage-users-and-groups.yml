@@ -1,0 +1,41 @@
+#!/usr/bin/env ansible-playbook
+- name: Manage users and groups
+  hosts: server_0
+  gather_facts: false
+  become: false
+
+  tasks:
+    - name: 1. Create a user `johndoe` with the UID `1001`
+      ansible.builtin.user:
+        name: johndoe
+        uid: 1001
+      check_mode: true
+      register: user_johndoe
+      failed_when:
+        - user_johndoe.changed
+
+    - name: 2. Create a group `admins` with the GID `2001`
+      ansible.builtin.group:
+        name: admins
+        gid: 2001
+      check_mode: true
+      register: group_admins
+      failed_when:
+        - group_admins.changed
+
+    - name: 3. Add the user `johndoe` to the group `admins`
+      ansible.builtin.user:
+        name: johndoe
+        groups: admins
+      check_mode: true
+      register: user_johndoe_admins
+      failed_when:
+        - user_johndoe_admins.changed
+
+    - name: 4. Allow the group `admin` to execute the command `systemctl` without a password
+      ansible.builtin.command:
+        cmd: 'grep "%admins ALL=(ALL) NOPASSWD: /usr/bin/systemctl" /etc/sudoers.d/admins'
+      changed_when: false
+      register: group_admins_sudoers
+      failed_when:
+        - group_admins_sudoers.changed

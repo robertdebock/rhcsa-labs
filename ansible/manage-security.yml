@@ -1,0 +1,60 @@
+#!/usr/bin/env ansible-playbook
+- name: Manage security
+  hosts: server_0
+  gather_facts: false
+  become: false
+
+  tasks:
+    - name: 1. Check if umask is 027
+      ansible.builtin.command:
+        cmd: umask
+      register: umask
+      failed_when:
+        - umask.stdout != "0027"
+      changed_when: false
+
+    - name: 2. Check if SELinux is enforcing
+      ansible.builtin.command:
+        cmd: getenforce
+      register: selinux
+      failed_when:
+        - selinux.stdout != "Enforcing"
+      changed_when: false
+
+    - name: 4. Check if /tmp/hosts_context.txt contains "system_u:object_r:net_conf_t:s0"
+      ansible.builtin.command:
+        cmd: grep "system_u:object_r:net_conf_t:s0" /tmp/hosts_context.txt
+      register: hosts_context
+      failed_when:
+        - hosts_context.rc != 0
+      changed_when: false
+      become: true
+
+    - name: 5. Check if contexts need changing in /var/www/html
+      ansible.builtin.command:
+        cmd: restorecon -Rnv /var/www/html
+      register: www_context
+      failed_when:
+        - www_context.stdout | length > 0
+      changed_when: false
+      become: true
+
+    - name: 6. Allow the target `http_port_t` to listen on port `8080`
+      community.general.seport:
+        ports: 8080
+        proto: tcp
+        setype: http_port_t
+      check_mode: true
+      register: seport
+      failed_when:
+        - seport.changed
+
+    - name: 7. Enable the SELinux boolean `httpd_can_network_connect`
+      ansible.posix.seboolean:
+        name: httpd_can_network_connect
+        state: true
+        persistent: true
+      check_mode: true
+      register: selinux_boolean
+      failed_when:
+        - selinux_boolean.changed

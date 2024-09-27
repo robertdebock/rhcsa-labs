@@ -10,7 +10,7 @@
     - name: 1. Configure the search domain `adfins.dev`.
       ansible.builtin.lineinfile:
         path: /etc/resolv.conf
-        line: "search adfins.dev"
+        line: "search adfinis.dev"
         state: present
       check_mode: true
       register: search_domain
@@ -35,6 +35,8 @@
         - http
         - https
         - nfs
+        - mountd
+        - rpc-bind
         - ssh
       become: true
       check_mode: true

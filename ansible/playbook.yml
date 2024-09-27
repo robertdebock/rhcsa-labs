@@ -21,3 +21,9 @@
 
 - name: Include manage-basic-networking.yml
   ansible.builtin.import_playbook: manage-basic-networking.yml
+
+- name: Include manage-users-and-groups.yml
+  ansible.builtin.import_playbook: manage-users-and-groups.yml
+
+- name: Include manage-security.yml
+  ansible.builtin.import_playbook: manage-security.yml
